@@ -176,7 +176,7 @@ public class SecurityConfig {
                 List.of(
                     "http://localhost:5173",
                     "http://localhost:5174",
-                     "https://YOUR-ACTUAL-VERCEL-DOMAIN.vercel.app"
+                     "https://m-tech-e-commerce-deployment-psi.vercel.app"
                 )
         );
 
