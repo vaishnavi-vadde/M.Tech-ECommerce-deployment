@@ -1,6 +1,7 @@
+
 import axios from "axios";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/auth`;
+const API_URL = import.meta.env.VITE_API_URL;
 
 export interface OrderItem {
     productId: number;
@@ -28,7 +29,6 @@ const getAuthHeaders = () => {
     };
 };
 
-
 // =====================================
 // CREATE ORDER
 // =====================================
@@ -36,11 +36,9 @@ const getAuthHeaders = () => {
 export const createOrder = async (
     items: OrderItem[]
 ) => {
-
     try {
-
         const response = await axios.post(
-            `${API_URL}/orders`,
+            `${API_URL}/api/orders`,
             {
                 items: items
             },
@@ -52,7 +50,6 @@ export const createOrder = async (
         return response.data;
 
     } catch (error: any) {
-
         console.error(
             "Create Order Error:",
             error.response?.data || error.message
@@ -77,7 +74,6 @@ export const createOrder = async (
     }
 };
 
-
 // =====================================
 // CREATE PAYMENT
 // =====================================
@@ -85,11 +81,9 @@ export const createOrder = async (
 export const createPayment = async (
     orderId: number
 ): Promise<PaymentResponse> => {
-
     try {
-
         const response = await axios.post(
-            `${API_URL}/payment/create/${orderId}`,
+            `${API_URL}/api/payment/create/${orderId}`,
             {},
             {
                 headers: getAuthHeaders()
@@ -99,7 +93,6 @@ export const createPayment = async (
         return response.data;
 
     } catch (error: any) {
-
         console.error(
             "Create Payment Error:",
             error.response?.data || error.message
@@ -124,7 +117,6 @@ export const createPayment = async (
     }
 };
 
-
 // =====================================
 // VERIFY PAYMENT
 // =====================================
@@ -137,11 +129,9 @@ export const verifyPayment = async (
         razorpaySignature: string;
     }
 ) => {
-
     try {
-
         const response = await axios.post(
-            `${API_URL}/payment/verify`,
+            `${API_URL}/api/payment/verify`,
             data,
             {
                 headers: getAuthHeaders()
@@ -151,7 +141,6 @@ export const verifyPayment = async (
         return response.data;
 
     } catch (error: any) {
-
         console.error(
             "Verify Payment Error:",
             error.response?.data || error.message
