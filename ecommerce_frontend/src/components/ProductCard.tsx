@@ -1,3 +1,4 @@
+
 import { useState, type FormEvent } from "react";
 import type { Product } from "../types/product";
 import { useCartStore } from "../store/cartStore";
@@ -5,52 +6,54 @@ import {
   deleteProduct,
   updateProduct,
 } from "../api/productApi";
+
 interface ProductCardProps {
-    product: Product;
-    isAdmin?: boolean;
+  product: Product;
+  isAdmin?: boolean;
 }
 
 function ProductCard({
   product,
   isAdmin = false,
 }: ProductCardProps) {
-
   const addToCart = useCartStore(
     (state) => state.addToCart
   );
 
   const [editing, setEditing] = useState(false);
 
-  const [productName, setProductName] =
-    useState(product.productName);
+  const [productName, setProductName] = useState(
+    product.productName
+  );
 
-  const [category, setCategory] =
-    useState(product.category);
+  const [category, setCategory] = useState(
+    product.category
+  );
 
-  const [description, setDescription] =
-    useState(product.description);
+  const [description, setDescription] = useState(
+    product.description
+  );
 
-  const [price, setPrice] =
-    useState(String(product.price));
+  const [price, setPrice] = useState(
+    String(product.price)
+  );
 
-  const [stock, setStock] =
-    useState(String(product.stock));
+  const [stock, setStock] = useState(
+    String(product.stock)
+  );
 
-  const [imageUrl, setImageUrl] =
-    useState(product.imageUrl);
+  const [imageUrl, setImageUrl] = useState(
+    product.imageUrl
+  );
 
-  const [rating, setRating] =
-    useState(String(product.rating));
+  const [rating, setRating] = useState(
+    String(product.rating)
+  );
 
   const [message, setMessage] = useState("");
 
-
-  // =========================
-  // DELETE
-  // =========================
-
+  // DELETE PRODUCT
   const handleDelete = async () => {
-
     if (
       !window.confirm(
         `Delete ${product.productName}?`
@@ -60,112 +63,66 @@ function ProductCard({
     }
 
     try {
-
-const email =
-  localStorage.getItem("email") || "";
-
-await deleteProduct(
-  product.productId,
-  email
-);
+      await deleteProduct(product.productId);
 
       alert("Product deleted successfully");
-
       window.location.reload();
-
     } catch (error) {
-
       console.error(error);
-
       alert("Product deletion failed");
     }
   };
 
-
-  // =========================
-  // UPDATE
-  // =========================
-
+  // UPDATE PRODUCT
   const handleUpdate = async (
-     event: FormEvent<HTMLFormElement>
+    event: FormEvent<HTMLFormElement>
   ) => {
-
     event.preventDefault();
-
     setMessage("");
 
     try {
+      await updateProduct(product.productId, {
+        productName,
+        category,
+        description,
+        price: Number(price),
+        stock: Number(stock),
+        imageUrl,
+        rating: Number(rating),
+        status:
+          Number(stock) > 0
+            ? "AVAILABLE"
+            : "OUT_OF_STOCK",
+      });
 
-      await updateProduct(
-        product.productId,
-        {
-          productName,
-          category,
-          description,
-          price: Number(price),
-          stock: Number(stock),
-          imageUrl,
-          rating: Number(rating),
-          status:
-            Number(stock) > 0
-              ? "AVAILABLE"
-              : "OUT_OF_STOCK",
-        }
-      );
-
-      setMessage(
-        "Product updated successfully"
-      );
-
+      setMessage("Product updated successfully");
       setEditing(false);
-
       window.location.reload();
-
     } catch (error) {
-
       console.error(error);
-
-      setMessage(
-        "Product update failed"
-      );
+      setMessage("Product update failed");
     }
   };
 
-
-  // =========================
   // PRODUCT CARD
-  // =========================
-
   return (
     <div className="product-card">
-
       {!editing ? (
-
         <>
           <img
             src={product.imageUrl}
             alt={product.productName}
           />
 
-          <h3>
-            {product.productName}
-          </h3>
+          <h3>{product.productName}</h3>
 
-          <p>
-            Category: {product.category}
-          </p>
+          <p>Category: {product.category}</p>
 
-          <p>
-            {product.description}
-          </p>
+          <p>{product.description}</p>
 
-          <p>
-            ₹{product.price}
-          </p>
+          <p>₹{product.price}</p>
 
-          <p>
-            Rating: ⭐ {product.rating}
-          </p>
+          <p>Rating: ⭐ {product.rating}</p>
 
           <p>
             {product.stock > 0
@@ -173,14 +130,10 @@ await deleteProduct(
               : "Out of Stock"}
           </p>
 
-
           {/* USER BUTTON */}
-
           {!isAdmin && (
             <button
-              onClick={() =>
-                addToCart(product)
-              }
+              onClick={() => addToCart(product)}
               disabled={product.stock === 0}
             >
               {product.stock > 0
@@ -189,45 +142,28 @@ await deleteProduct(
             </button>
           )}
 
-
           {/* ADMIN BUTTONS */}
-
           {isAdmin && (
             <div className="admin-product-buttons">
-
               <button
-                onClick={() =>
-                  setEditing(true)
-                }
+                onClick={() => setEditing(true)}
               >
                 Update
               </button>
 
-              <button
-                onClick={handleDelete}
-              >
+              <button onClick={handleDelete}>
                 Delete
               </button>
-
             </div>
           )}
-
         </>
-
       ) : (
-
-        // =========================
-        // UPDATE FORM
-        // =========================
-
+        /* UPDATE FORM */
         <form
           className="product-form"
           onSubmit={handleUpdate}
         >
-
-          <h3>
-            Update Product
-          </h3>
+          <h3>Update Product</h3>
 
           <input
             value={productName}
@@ -302,9 +238,7 @@ await deleteProduct(
 
           <button
             type="button"
-            onClick={() =>
-              setEditing(false)
-            }
+            onClick={() => setEditing(false)}
           >
             Cancel
           </button>
@@ -314,11 +248,8 @@ await deleteProduct(
               {message}
             </p>
           )}
-
         </form>
-
       )}
-
     </div>
   );
 }
