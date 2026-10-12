@@ -1,3 +1,4 @@
+
 package com.klu.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +25,12 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    // ==============================
+    // SIGNUP
+    // ==============================
+    // Public signup always creates a USER.
+    // Clients cannot choose the ADMIN role.
+
     public String signup(SignupRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -39,18 +46,16 @@ public class UserService {
                 passwordEncoder.encode(request.getPassword())
         );
 
-        if (request.getRole() == null || request.getRole().isBlank()) {
-            user.setRole(Role.USER);
-        } else {
-            user.setRole(
-                    Role.valueOf(request.getRole().toUpperCase())
-            );
-        }
+        user.setRole(Role.USER);
 
         userRepository.save(user);
 
         return "User registered successfully";
     }
+
+    // ==============================
+    // SIGNIN
+    // ==============================
 
     public AuthResponse signin(SigninRequest request) {
 
